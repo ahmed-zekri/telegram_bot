@@ -1,3 +1,6 @@
+import os
+import sys
+
 proxies = [
 
     'http://80.90.80.54:8080', 'http://umhnxdxl:db70460384@107.174.143.220:36505',
@@ -37,3 +40,13 @@ groups = ['@CRYPTOMOONGEMs', '@dexgemschat', '@uniswapgemspumpz', '@defisearch',
           '@uniswap_gem_alerts', '@binancedextrading', '@uniswapunofficial', '@CryproPriceTalks', '@gemsfordegensgroup',
           '@gemdiscussion', '@gemtalkc', '@InfinityBotz', '@cryptomindsgroup', '@themoonboyschat', '@sgdefi',
           '@UniswapGemGroup', '@Uniswap_Gem_Dicuss', '@defisearch', '@SuicidalPumpGroup', '@illuminatiGem']
+
+
+def get_base_path():
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+
+    except Exception:
+        return None
+    return base_path
