@@ -22,3 +22,18 @@ proxies = [
     'http://rcrvtkug:21d0ec259e@172.245.242.237:36505'
 
 ]
+groups = ['@CRYPTOMOONGEMs', '@dexgemschat', '@uniswapgemspumpz', '@defisearch', '@gemcollectors', '@moonhunters',
+          '@supergemhunter', '@themoonboyschat', '@UniswapGemGroup', '@jumpsquad', '@BitSquad', '@uniswapresearch',
+          '@shitcoincz', '@DeFiRaccoons', '@CryptoFamilyGroup', '@CryproPriceTalks', '@TheSelectiveApe',
+          '@BSCStreetBetsCaptain', '@BSCApe', '@bscgemz', '@RedRoomTG', '@moonshotcartel', '@uniswaptalk',
+          '@uniswaprektplebs', '@tehmoonwalkers', '@cryptodakurobinhooders', '@wolfonairechatbox', '@SmartChainApes',
+          '@BitSquad', '@Satoshi_club', '@CryptoFamilyGroup', '@elliotradescrypto', '@TradeCoinUnderGround',
+          '@cryptodakurobinhooders', '@moonhunters', '@tehMoonwalkeRs', '@DeFiRaccoons', '@uniswapgemsv2', '@de_fi',
+          '@gemcollectors', '@cryptoM00NShots', '@dexgemschat', '@uniswapresearch', '@infinitygainzz', '@uniswaplegit',
+          '@acmecrypto', '@oddgemsfamilia', '@thegemhunterstg', '@uniswapgemspumpz', '@WhalersClub101', '@Uniswapchina',
+          '@Cryptosupportservices', '@uniswapgem123', '@UniswapEarlyCalls', '@crypto_revolution1',
+          '@overdose_gems_group', '@GemSnipers', '@InfinityGainzz', '@unigemchatz', '@supergemhunter',
+          '@The_Trading_Pit', '@deficrew', '@Farmingroom', '@Pumpchads', '@uniswapone', '@shitcoincz',
+          '@uniswap_gem_alerts', '@binancedextrading', '@uniswapunofficial', '@CryproPriceTalks', '@gemsfordegensgroup',
+          '@gemdiscussion', '@gemtalkc', '@InfinityBotz', '@cryptomindsgroup', '@themoonboyschat', '@sgdefi',
+          '@UniswapGemGroup', '@Uniswap_Gem_Dicuss', '@defisearch', '@SuicidalPumpGroup', '@illuminatiGem']
