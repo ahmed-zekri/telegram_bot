@@ -21,6 +21,7 @@ def copy_session_in_executable():
 
 
 def launch_campaign():
+    message = telegram_message.get('1.0', 'end-1c')
     for group in groups:
         print(f"Extracting all members for group {group}")
         time.sleep(random.randint(1, 5))
@@ -35,7 +36,7 @@ def launch_campaign():
         print(f"Extracted {len(usernames)} members for group {group}")
         for username in usernames:
             print(f"Sending message to username {username}")
-            # client.send_message(username, 'Hello!')
+            client.send_message(username, message.replace("{username}", username))
             time.sleep(random.randint(1, 5))
 
 
