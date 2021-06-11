@@ -55,3 +55,6 @@ def get_base_path():
     except Exception:
         return None
     return base_path
+
+
+configurable_text = "Hey {username} I saw we were in the same group, and I just found a crypto community which is the most precise and accurate group out there! \nI just share it with some people because more people have to see it.\nIt changed my life This is the link —> https://t.me/joinchat/T45k8mHzwqYW67q0 \nSpeak to you soon :)"

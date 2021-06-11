@@ -9,7 +9,7 @@ from tkinter.scrolledtext import ScrolledText
 from telethon import TelegramClient, events, sync, hints
 from win32api import GetSystemMetrics
 
-from variables import groups, get_base_path
+from variables import groups, get_base_path, configurable_text
 
 
 def copy_session_in_executable():
@@ -21,23 +21,33 @@ def copy_session_in_executable():
 
 
 def launch_campaign():
+    button["state"] = "disabled"
     message = telegram_message.get('1.0', 'end-1c')
     for group in groups:
-        print(f"Extracting all members for group {group}")
+        info.config(text=f"Extracting all members for group {group}")
+        window.update()
         time.sleep(random.randint(1, 5))
-        participants = client.get_participants(group, aggressive=True)
+        participants = client.get_participants(group, aggressive=False)
         while type(participants) != hints.TotalList:
-            print("Invalid response retrying")
-
-            participants = client.get_participants(group, aggressive=True)
+            info.config(text="Invalid response retrying")
+            window.update()
+            participants = client.get_participants(group, aggressive=False)
             time.sleep(random.randint(1, 5))
 
         usernames = [f"@{participant.username}" for participant in participants if participant.username is not None]
-        print(f"Extracted {len(usernames)} members for group {group}")
+        info.config(text=f"Extracted {len(usernames)} members for group {group}")
+        window.update()
+        time.sleep(random.randint(1, 5))
+        random.shuffle(usernames)
         for username in usernames:
-            print(f"Sending message to username {username}")
-            client.send_message(username, message.replace("{username}", username))
+            info.config(text=f"Sending message to username {username}")
+            window.update()
+            try:
+                client.send_message(username, message.replace("{username}", username))
+            except Exception as e:
+                info.config(text=f"Error : {e}")
             time.sleep(random.randint(1, 5))
+    button["state"] = "normal"
 
 
 if __name__ == '__main__':
@@ -62,10 +72,11 @@ if __name__ == '__main__':
     # message input
     telegram_message = ScrolledText(wrap=tk.WORD)
     telegram_message.place(width=int(screen_width / 2), height=int(screen_height / 2))
+    telegram_message.insert('1.0', configurable_text)
     # Info label
     info = tk.Label(text="", fg='#0000CD')
 
-    button = tk.Button(text="Launch campaigns", command=launch_campaign)
+    button = tk.Button(text="Launch campaign", command=launch_campaign)
 
     telegram_message_label.pack()
     telegram_message.pack()
