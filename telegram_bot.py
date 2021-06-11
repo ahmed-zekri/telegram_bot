@@ -46,6 +46,7 @@ def launch_campaign():
                 client.send_message(username, message.replace("{username}", username))
             except Exception as e:
                 info.config(text=f"Error : {e}")
+                window.update()
             time.sleep(random.randint(1, 5))
     button["state"] = "normal"
 
