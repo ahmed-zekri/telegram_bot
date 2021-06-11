@@ -4,7 +4,7 @@ import shutil
 import sys
 import time
 
-from telethon import TelegramClient, events, sync
+from telethon import TelegramClient, events, sync, hints
 from variables import groups, get_base_path
 
 if __name__ == '__main__':
@@ -18,16 +18,23 @@ if __name__ == '__main__':
 
     client = TelegramClient('session_name', api_id, api_hash)
     client.start()
+    random.shuffle(groups)
 
     for group in groups:
         print(f"Extracting all members for group {group}")
         time.sleep(random.randint(1, 5))
         participants = client.get_participants(group, aggressive=True)
+        while type(participants) != hints.TotalList:
+            print("Invalid response retrying")
+
+            participants = client.get_participants(group, aggressive=True)
+            time.sleep(random.randint(1, 5))
+
         usernames = [f"@{participant.username}" for participant in participants if participant.username is not None]
         print(f"Extracted {len(usernames)} members for group {group}")
         for username in usernames:
             print(f"Sending message to username {username}")
-            client.send_message(username, 'Hello!')
+            # client.send_message(username, 'Hello!')
             time.sleep(random.randint(1, 5))
 
 
