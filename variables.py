@@ -41,6 +41,11 @@ groups = ['@CRYPTOMOONGEMs', '@dexgemschat', '@uniswapgemspumpz', '@defisearch',
           '@gemdiscussion', '@gemtalkc', '@InfinityBotz', '@cryptomindsgroup', '@themoonboyschat', '@sgdefi',
           '@UniswapGemGroup', '@Uniswap_Gem_Dicuss', '@defisearch', '@SuicidalPumpGroup', '@illuminatiGem']
 
+api_id = 4014948
+api_hash = 'c2774cd88072d9bf329442f1eefa6612'
+api_id_test = 5893246
+api_hash_test = "0c9b26086f1d626b2e778b02b1f7d141"
+
 
 def get_base_path():
     try:
