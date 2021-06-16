@@ -129,7 +129,8 @@ def launch_campaign():
             while True:
                 try:
                     attempts += 1
-                    rotate_proxy()
+                    if use_proxy:
+                        rotate_proxy()
                     client.send_message(username, message.replace("{username}", username))
 
                     with open(file="sent_users", mode="a+") as file:
@@ -156,11 +157,13 @@ def launch_campaign():
 
                     if gui:
                         info.config(
-                            text=f"Couldn't send message {e}, Switching to account {account_index} with proxy {proxies[proxy_index]}, attempts remaining :{message_send_attempts - attempts}")
+                            text=f"Couldn't send message {e}, Switching to account {account_index}" + (
+                                f" with proxy {proxies[proxy_index]}" if use_proxy else "") + f", attempts remaining :{message_send_attempts - attempts}")
                         window.update()
                     else:
                         print(
-                            f"Couldn't send message {e}, Switching to account {account_index} with proxy {proxies[proxy_index]}, attempts remaining :{message_send_attempts - attempts}")
+                            f"Couldn't send message {e}, Switching to account {account_index}" + (
+                                f" with proxy {proxies[proxy_index]}" if use_proxy else "") + f", attempts remaining :{message_send_attempts - attempts}")
 
                     client.start()
                     sleeping_time = random.randint(60, 120)
@@ -179,8 +182,10 @@ def launch_campaign():
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Telegram bot to launch campaigns")
     parser.add_argument("-ng", '--no-gui', default=True, help='Disable gui', action='store_false')
+    parser.add_argument("-p", '--use-proxy', default=False, help='Use proxies', action='store_true')
     args = parser.parse_args()
     gui = args.no_gui
+    use_proxy = args.use_proxy
 
     for _ in range(len(api_id)):
         copy_data_files_to_executable_dir(f"session_name.{_}.session")
