@@ -145,7 +145,7 @@ def launch_campaign():
 
                         break
 
-                    proxy_index += 1
+                    proxy_index = random.randint(0, len(proxies) - 1)
                     account_index += 1
                     if account_index > len(api_id) - 1:
                         account_index = 0
