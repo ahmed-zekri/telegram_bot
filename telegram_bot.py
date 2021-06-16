@@ -9,6 +9,7 @@ import tkinter as tk
 from tkinter.scrolledtext import ScrolledText
 
 import socks
+# TODO             DO NOT REMOVE sync !!!!!!!
 from telethon import TelegramClient, events, sync, hints
 from win32api import GetSystemMetrics
 
@@ -16,6 +17,7 @@ from variables import groups, get_base_path, configurable_text, api_id, api_hash
 
 account_index = 0
 proxy_index = 0
+message_send_attempts = 20
 
 
 # Determine if application is a script file or frozen exe
@@ -77,13 +79,18 @@ def launch_campaign():
             print(f"Extracting all members for group {group}")
 
         time.sleep(random.randint(1, 5))
-        while True:
-            try:
-                participants = client.get_participants(group, aggressive=False)
-                break
-            except:
-                time.sleep(3)
-                pass
+
+        try:
+            participants = client.get_participants(group, aggressive=False)
+
+        except:
+            time.sleep(3)
+            if gui:
+                info.config(text=f"Couldn't extract members for group {group}, skipping,")
+                window.update()
+            else:
+                print(f"Couldn't extract members for group {group}, skipping,")
+            continue
         while type(participants) != hints.TotalList:
             if gui:
                 info.config(text="Invalid response retrying")
@@ -111,51 +118,59 @@ def launch_campaign():
                 else:
                     print(f"{username} already received the message")
                 continue
-            rotate_proxy()
+
             if gui:
                 info.config(text=f"Sending message to username {username} using proxy {proxies[proxy_index]}")
                 window.update()
             else:
                 print(f"Sending message to username {username} using proxy {proxies[proxy_index]}")
 
-            try:
+            attempts = 0
+            while True:
+                try:
+                    attempts += 1
+                    rotate_proxy()
+                    client.send_message(username, message.replace("{username}", username))
 
-                client.send_message(username, message.replace("{username}", username))
+                    with open(file="sent_users", mode="a+") as file:
+                        file.write(f"{username}\n")
+                    break
+                except Exception as e:
+                    if attempts >= message_send_attempts:
+                        if gui:
+                            info.config(text=f"Error : {e},Reached max number of attempts, proceeding to next user")
+                            window.update()
+                        else:
+                            print(f"Error : {e},Reached max number of attempts, proceeding to next user")
 
-                with open(file="sent_users", mode="a+") as file:
-                    file.write(f"{username}\n")
+                        break
 
-            except Exception as e:
-                if gui:
-                    info.config(text=f"Error : {e}")
-                    window.update()
-                else:
-                    print(f"Error : {e}")
+                    proxy_index += 1
+                    account_index += 1
+                    if account_index > len(api_id) - 1:
+                        account_index = 0
+                    client.disconnect()
 
-                proxy_index += 1
-                account_index += 1
-                if account_index > len(api_id) - 1:
-                    account_index = 0
-                client.disconnect()
+                    client = TelegramClient(f'session_name.{account_index}', api_id[account_index],
+                                            api_hash[account_index])
 
-                client = TelegramClient(f'session_name.{account_index}', api_id[account_index], api_hash[account_index])
+                    if gui:
+                        info.config(
+                            text=f"Couldn't send message {e}, Switching to account {account_index} with proxy {proxies[proxy_index]}, attempts remaining :{message_send_attempts - attempts}")
+                        window.update()
+                    else:
+                        print(
+                            f"Couldn't send message {e}, Switching to account {account_index} with proxy {proxies[proxy_index]}, attempts remaining :{message_send_attempts - attempts}")
 
-                if gui:
-                    info.config(text=f"Switched to account {account_index}")
-                    window.update()
-                else:
-                    print(f"Switched to account {account_index}")
+                    client.start()
+                    sleeping_time = random.randint(60, 120)
+                    if gui:
+                        info.config(text=f"Sleeping for {sleeping_time} seconds")
+                        window.update()
+                    else:
+                        print(f"Sleeping for {sleeping_time} seconds")
 
-                client.start()
-
-            sleeping_time = random.randint(60, 120)
-            if gui:
-                info.config(text=f"Sleeping for {sleeping_time} seconds")
-                window.update()
-            else:
-                print(f"Sleeping for {sleeping_time} seconds")
-
-            time.sleep(sleeping_time)
+                    time.sleep(sleeping_time)
 
     if gui:
         button["state"] = "normal"
