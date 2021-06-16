@@ -1,65 +1,183 @@
+import argparse
 import os
 import random
+import re
 import shutil
 import sys
 import time
 import tkinter as tk
 from tkinter.scrolledtext import ScrolledText
 
+import socks
 from telethon import TelegramClient, events, sync, hints
 from win32api import GetSystemMetrics
 
-from variables import groups, get_base_path, configurable_text
+from variables import groups, get_base_path, configurable_text, api_id, api_hash, proxies
+
+account_index = 0
+proxy_index = 0
 
 
-def copy_session_in_executable():
-    if os.path.exists("session_name.session"):
+# Determine if application is a script file or frozen exe
+def check_app_is_exe():
+    return getattr(sys, 'frozen', False)
+
+
+def copy_data_files_to_executable_dir(filename):
+    if os.path.exists(filename):
         path = get_base_path()
-        if path is not None:
-            filename = os.path.join(path, "session_name.session")
-            shutil.copy(filename, os.path.abspath("session_name.session"))
+        if path == '':
+            return
+        filename = os.path.join(path, filename)
+
+        shutil.copy(filename, os.path.abspath(filename))
+    else:
+        session_id = re.findall('.(\d)', filename)
+        if len(session_id) == 1:
+            print(f'Login for account {session_id[0]}')
+            c = TelegramClient(f'session_name.{session_id[0]}', api_id[int(session_id[0])],
+                               api_hash[int(session_id[0])])
+            c.start()
+            c.disconnect()
+            time.sleep(1)
+            copy_data_files_to_executable_dir(f'session_name.{session_id[0]}.session')
+
+
+def rotate_proxy():
+    global proxy_index
+
+    proxy_index = random.randint(0, len(proxies) - 1)
+    proxy = dict(proxy_type=socks.HTTP, addr=re.findall("@([\d.]+):", proxies[proxy_index])[0],
+                 port=int(re.findall(":([\d]+)", proxies[proxy_index])[0]),
+                 username=re.findall("/([\w\d]+)", proxies[proxy_index])[0],
+                 password=re.findall(":([\w\d]+)@", proxies[proxy_index])[0])
+    client.set_proxy(proxy)
+
+
+def check_username_received(username):
+    with open(file='sent_users', mode='r') as file:
+        usernames = file.read().split('\n')
+    return username in usernames
 
 
 def launch_campaign():
-    button["state"] = "disabled"
-    message = telegram_message.get('1.0', 'end-1c')
+    global proxy_index
+    global account_index
+    global client
+    if gui:
+        button["state"] = "disabled"
+        message = telegram_message.get('1.0', 'end-1c')
+    else:
+        message = configurable_text
     for group in groups:
-        info.config(text=f"Extracting all members for group {group}")
-        window.update()
-        time.sleep(random.randint(1, 5))
-        participants = client.get_participants(group, aggressive=False)
-        while type(participants) != hints.TotalList:
-            info.config(text="Invalid response retrying")
+        if gui:
+            info.config(text=f"Extracting all members for group {group}")
             window.update()
+        else:
+            print(f"Extracting all members for group {group}")
+
+        time.sleep(random.randint(1, 5))
+        while True:
+            try:
+                participants = client.get_participants(group, aggressive=False)
+                break
+            except:
+                time.sleep(3)
+                pass
+        while type(participants) != hints.TotalList:
+            if gui:
+                info.config(text="Invalid response retrying")
+                window.update()
+            else:
+                print("Invalid response retrying")
+
             participants = client.get_participants(group, aggressive=False)
             time.sleep(random.randint(1, 5))
 
         usernames = [f"@{participant.username}" for participant in participants if participant.username is not None]
-        info.config(text=f"Extracted {len(usernames)} members for group {group}")
-        window.update()
+        if gui:
+            info.config(text=f"Extracted {len(usernames)} members for group {group}")
+            window.update()
+        else:
+            print(f"Extracted {len(usernames)} members for group {group}")
+
         time.sleep(random.randint(1, 5))
         random.shuffle(usernames)
         for username in usernames:
-            info.config(text=f"Sending message to username {username}")
-            window.update()
-            try:
-                client.send_message(username, message.replace("{username}", username))
-            except Exception as e:
-                info.config(text=f"Error : {e}")
+            if check_username_received(username):
+                if gui:
+                    info.config(text=f"{username} already received the message")
+                    window.update()
+                else:
+                    print(f"{username} already received the message")
+                continue
+            rotate_proxy()
+            if gui:
+                info.config(text=f"Sending message to username {username} using proxy {proxies[proxy_index]}")
                 window.update()
-            time.sleep(random.randint(1, 5))
-    button["state"] = "normal"
+            else:
+                print(f"Sending message to username {username} using proxy {proxies[proxy_index]}")
+
+            try:
+
+                client.send_message(username, message.replace("{username}", username))
+
+                with open(file="sent_users", mode="a+") as file:
+                    file.write(f"{username}\n")
+
+            except Exception as e:
+                if gui:
+                    info.config(text=f"Error : {e}")
+                    window.update()
+                else:
+                    print(f"Error : {e}")
+
+                proxy_index += 1
+                account_index += 1
+                if account_index > len(api_id) - 1:
+                    account_index = 0
+                client.disconnect()
+
+                client = TelegramClient(f'session_name.{account_index}', api_id[account_index], api_hash[account_index])
+
+                if gui:
+                    info.config(text=f"Switched to account {account_index}")
+                    window.update()
+                else:
+                    print(f"Switched to account {account_index}")
+
+                client.start()
+
+            sleeping_time = random.randint(60, 120)
+            if gui:
+                info.config(text=f"Sleeping for {sleeping_time} seconds")
+                window.update()
+            else:
+                print(f"Sleeping for {sleeping_time} seconds")
+
+            time.sleep(sleeping_time)
+
+    if gui:
+        button["state"] = "normal"
 
 
 if __name__ == '__main__':
-    api_id = 4014948
-    api_hash = 'c2774cd88072d9bf329442f1eefa6612'
+    parser = argparse.ArgumentParser(description="Telegram bot to launch campaigns")
+    parser.add_argument("-ng", '--no-gui', default=True, help='Disable gui', action='store_false')
+    args = parser.parse_args()
+    gui = args.no_gui
 
-    client = TelegramClient('session_name', api_id, api_hash)
+    for _ in range(len(api_id)):
+        copy_data_files_to_executable_dir(f"session_name.{_}.session")
+    copy_data_files_to_executable_dir("sent_users")
+
+    client = TelegramClient(f'session_name.{account_index}', api_id[account_index], api_hash[account_index])
     client.start()
     random.shuffle(groups)
 
-    copy_session_in_executable()
+    if not gui:
+        launch_campaign()
+        sys.exit()
     # UI building
     window = tk.Tk()
     screen_width = GetSystemMetrics(0)

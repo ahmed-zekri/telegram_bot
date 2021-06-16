@@ -3,7 +3,7 @@ import sys
 
 proxies = [
 
-    'http://80.90.80.54:8080', 'http://umhnxdxl:db70460384@107.174.143.220:36505',
+    'http://umhnxdxl:db70460384@107.174.143.220:36505',
     'http://umhnxdxl:db70460384@172.245.103.125:36505', 'http://umhnxdxl:db70460384@107.174.139.141:36505',
     'http://umhnxdxl:db70460384@192.3.126.142:36505', 'http://umhnxdxl:db70460384@107.174.143.231:36505',
     'http://umhnxdxl:db70460384@192.3.126.146:36505', 'http://umhnxdxl:db70460384@198.23.169.86:36505',
@@ -41,20 +41,18 @@ groups = ['@CRYPTOMOONGEMs', '@dexgemschat', '@uniswapgemspumpz', '@defisearch',
           '@gemdiscussion', '@gemtalkc', '@InfinityBotz', '@cryptomindsgroup', '@themoonboyschat', '@sgdefi',
           '@UniswapGemGroup', '@Uniswap_Gem_Dicuss', '@defisearch', '@SuicidalPumpGroup', '@illuminatiGem']
 
-api_id = 4014948
-api_hash = 'c2774cd88072d9bf329442f1eefa6612'
-api_id_test = 5893246
-api_hash_test = "0c9b26086f1d626b2e778b02b1f7d141"
+api_id = [4696418, 4014948, 5893246, 6295375]
+api_hash = ['86d7ec586c288eac246589299322954e', 'c2774cd88072d9bf329442f1eefa6612', "0c9b26086f1d626b2e778b02b1f7d141",
+            "61183866abce7e22cd87512169afe3df"]
 
 
 def get_base_path():
     try:
         # PyInstaller creates a temp folder and stores path in _MEIPASS
-        base_path = sys._MEIPASS
+        return sys._MEIPASS
 
     except Exception:
-        return None
-    return base_path
+        return ''
 
 
 configurable_text = "Hey {username} I saw we were in the same group, and I just found a crypto community which is the most precise and accurate group out there! \nI just share it with some people because more people have to see it.\nIt changed my life This is the link —> https://t.me/joinchat/T45k8mHzwqYW67q0 \nSpeak to you soon :)"
