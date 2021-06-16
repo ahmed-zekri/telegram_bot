@@ -17,7 +17,6 @@ from variables import groups, get_base_path, configurable_text, api_id, api_hash
 
 account_index = 0
 proxy_index = 0
-message_send_attempts = 20
 
 
 # Determine if application is a script file or frozen exe
@@ -185,9 +184,12 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Telegram bot to launch campaigns")
     parser.add_argument("-ng", '--no-gui', default=True, help='Disable gui', action='store_false')
     parser.add_argument("-p", '--use-proxy', default=False, help='Use proxies', action='store_true')
+    parser.add_argument("-m", '--message-attempts', type=int, default=20,
+                        help='Maximum attempts allowed to send a message')
     args = parser.parse_args()
     gui = args.no_gui
     use_proxy = args.use_proxy
+    message_send_attempts = args.message_attempts
 
     for _ in range(len(api_id)):
         copy_data_files_to_executable_dir(f"session_name.{_}.session")
