@@ -120,10 +120,12 @@ def launch_campaign():
                 continue
 
             if gui:
-                info.config(text=f"Sending message to username {username} using proxy {proxies[proxy_index]}")
+                info.config(text=f"Sending message to username {username}" + (
+                    f" using proxy {proxies[proxy_index]} " if use_proxy else ""))
                 window.update()
             else:
-                print(f"Sending message to username {username} using proxy {proxies[proxy_index]}")
+                print(f"Sending message to username {username}" + (
+                    f" using proxy {proxies[proxy_index]} " if use_proxy else ""))
 
             attempts = 0
             while True:
