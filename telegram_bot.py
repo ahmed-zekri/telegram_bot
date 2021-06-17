@@ -178,6 +178,8 @@ def launch_campaign():
 
     if gui:
         button["state"] = "normal"
+    else:
+        launch_campaign()
 
 
 if __name__ == '__main__':
