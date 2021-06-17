@@ -192,12 +192,17 @@ if __name__ == '__main__':
                         help='Accounts used to send the messages')
     parser.add_argument("-w", '--message_wait', type=int, default=120,
                         help='Time to wait between each sent message')
+    parser.add_argument("-cm", '--campaign_message', type=str, default=configurable_text,
+                        help='Text to be sent in the campaign, can only be run on no gui mode')
     args = parser.parse_args()
     gui = args.no_gui
     use_proxy = args.use_proxy
     message_send_attempts = args.message_attempts
     account_numbers = args.account_numbers
     message_wait = args.message_wait
+    configurable_text = args.campaign_message
+    if ('-cm' in sys.argv or '--campaign_message' in sys.argv) and gui:
+        raise parser.error('Campaign message can only be specified in no gui mode')
     for _ in range(account_numbers):
         copy_data_files_to_executable_dir(f"session_name.{_}.session")
     copy_data_files_to_executable_dir("sent_users")
