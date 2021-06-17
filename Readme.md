@@ -1,6 +1,6 @@
-# Foobar
+# Telegram campaign bot
 
-Telegram bot is a Python bot build using telethon library. 
+Telegram campaign is a Python bot build using telethon library. 
 This bot allows for sending a specific message to many users
 of specific groups.
 
