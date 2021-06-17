@@ -149,7 +149,7 @@ def launch_campaign():
 
                     proxy_index = random.randint(0, len(proxies) - 1)
                     account_index += 1
-                    if account_index > len(api_id) - 1:
+                    if account_index > account_numbers - 1:
                         account_index = 0
                     client.disconnect()
 
@@ -167,7 +167,7 @@ def launch_campaign():
                                 f" with proxy {proxies[proxy_index]}" if use_proxy else "") + f", attempts remaining :{message_send_attempts - attempts}")
 
                     client.start()
-                    sleeping_time = random.randint(60, 120)
+                    sleeping_time = random.randint(message_wait, message_wait + 20)
                     if gui:
                         info.config(text=f"Sleeping for {sleeping_time} seconds")
                         window.update()
@@ -188,12 +188,17 @@ if __name__ == '__main__':
     parser.add_argument("-p", '--use-proxy', default=False, help='Use proxies', action='store_true')
     parser.add_argument("-m", '--message-attempts', type=int, default=20,
                         help='Maximum attempts allowed to send a message')
+    parser.add_argument("-n", '--account_numbers', type=int, default=len(api_id),
+                        help='Accounts used to send the messages')
+    parser.add_argument("-w", '--message_wait', type=int, default=120,
+                        help='Time to wait between each sent message')
     args = parser.parse_args()
     gui = args.no_gui
     use_proxy = args.use_proxy
     message_send_attempts = args.message_attempts
-
-    for _ in range(len(api_id)):
+    account_numbers = args.account_numbers
+    message_wait = args.message_wait
+    for _ in range(account_numbers):
         copy_data_files_to_executable_dir(f"session_name.{_}.session")
     copy_data_files_to_executable_dir("sent_users")
 
