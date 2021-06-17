@@ -186,7 +186,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Telegram bot to launch campaigns")
     parser.add_argument("-ng", '--no-gui', default=True, help='Disable gui', action='store_false')
     parser.add_argument("-p", '--use-proxy', default=False, help='Use proxies', action='store_true')
-    parser.add_argument("-m", '--message-attempts', type=int, default=20,
+    parser.add_argument("-ma", '--message-attempts', type=int, default=20,
                         help='Maximum attempts allowed to send a message')
     parser.add_argument("-n", '--account_numbers', type=int, default=len(api_id),
                         help='Accounts used to send the messages')
